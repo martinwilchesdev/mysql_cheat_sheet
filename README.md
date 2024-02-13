@@ -76,7 +76,7 @@
 
 ### Insertar un registro en una tabla
 
-    INSERT INTO users (first_name, last_name, email, password, is_admin, register_data) 
+    INSERT INTO users (first_name, last_name, email, password, is_admin, register_data)
     VALUES ('Martin', 'Wilches', 'martinwilchesp@gmail.com', 'abcd1234', 1, now());
 
 ### Consultar registros de una tabla
@@ -117,3 +117,76 @@
 
     SELECT DISTINCT name FROM users;
 
+### Seleccionar registros dentro de un rango
+
+    SELECT * FROM users WHERE age BETWEEN 20 AND 25;
+
+### Seleccionar registros a traves de coincidencias parciales en el campo especificado
+
+    SELECT * FROM users WHERE dept LIKE 'd%';
+    SELECT * FROM users WHERE dept LIKE 'dev%';
+    SELECT * FROM users WHERE dept LIKE '%t';
+    SELECT * FROM users WHERE dept LIKE 't%';
+    SELECT * FROM users WHERE dept LIKE '%tmp%';
+
+### Seleccionar los registros que no coincidan de forma parcial con el campo especificado
+
+    SELECT * FROM users WHERE last_name NOT LIKE 'a%';
+
+### Seleccionar los registros que se encuentren en un conjunto de datos en un campo especifico
+
+    SELECT * FROM users WHERE dept IN ('design', 'sales');
+
+### Crear un indice
+
+    CREATE INDEX LIndex ON users(location);
+
+### Eliminar un indice
+
+    DROP INDEX LIndex ON users;
+
+### Crear una tabla que contenga llaves foraneas
+
+    CREATE TABLE posts(
+        id INT AUTO_INCREMENT,
+        user_id INT,
+        body VARCHAR(20),
+        PRIMARY KEY(id),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+## Multiples tablas
+
+### INNER JOIN - En el resultado de la consulta se agregan todos los registros de ambas tablas, incluso los que no cumplen con la condición especificada
+
+    SELECT
+        u.first_name,
+        u.age,
+        p.body
+    FROM users AS 'u'
+    INNER JOIN posts AS 'p'
+    ON u.id = p.user_id
+    ORDER BY p.id;
+
+### LEFT JOIN - En el resultado de la consulta se agregan todos los registros de la tabla de la izquierda (users <-> posts) que cumplan con la condición especificada
+
+    SELECT
+        u.first_name,
+        p.body
+    FROM users AS 'u'
+    LEFT JOIN posts AS 'p'
+    ON u.id = p.user_id;
+
+### Funciones agregadas
+
+    SELECT COUNT(id) FROM users;
+    SELECT MAX(age) FROM users;
+    SELECT MIN(age) FROM users;
+    SELECT SUM(age) FROM users;
+    SELECT UCASE(first_name), LCASE(last_name) FROM users;
+
+### Agrupar filas que tengan el mismo valor en una o mas columnas especificas, siendo especialmente útil cuando se usan funciones agregadas.
+
+    SELECT age, COUNT(age) FROM users group by age;
+    SELECT age, COUNT(age) FROM users WHERE age > 20 GROUP BY age;
+    SELECT age, COUNT(age) FROM users GROUP BY age HAVING COUNT(age) >= 2;
